@@ -34,6 +34,8 @@ except ImportError:
     hf_hub_version = None
     tf_version = None
 
+from datasets import load_dataset
+
 logger = logging.get_logger(__name__)
 
 
@@ -72,6 +74,7 @@ def get_dataloader(trainer: DistributedTrainer):
             # TODO @nouamanetazi: this may timeout before 1st device finishes processing dataset. Can we have a ctxmanager to modify timeout?
             # TODO: generalise to include  for validation/test splits
 
+            """
             # We load the raw dataset
             raw_dataset = get_datasets(
                 hf_dataset_or_datasets=trainer.config.data.dataset.hf_dataset_or_datasets,
@@ -91,7 +94,8 @@ def get_dataloader(trainer: DistributedTrainer):
                 dataset_overwrite_cache=trainer.config.data.dataset.dataset_overwrite_cache,
                 sequence_length=trainer.sequence_length,
             )
-
+            """
+            train_dataset = load_dataset(trainer.config.data.dataset.hf_dataset_or_datasets)["train"]
             # We load the processed dataset on the ranks requiring it
             dataloader = get_train_dataloader(
                 train_dataset=train_dataset,
